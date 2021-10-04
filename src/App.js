@@ -3,11 +3,15 @@ import { Canvas } from "@react-three/fiber";
 import { Stats, OrbitControls, Sky, Stars } from "@react-three/drei";
 import Main from "./Components/Main/Main";
 import { useState } from "react";
+import { useRigMouseEvents } from "./Components/Rig/useRigMouseEvents";
+import Rig from "./Components/Rig/Rig";
 
 export default function App() {
-  const [length, setLength] = useState(100000);
+  const [length, setLength] = useState(50000);
+
+  const [mouse, onMouseMove, onWheel] = useRigMouseEvents();
   return (
-    <div className="container">
+    <div className="container" onPointerMove={onMouseMove} onWheel={onWheel}>
       <Canvas
         camera={{
           position: [0, 0, 100],
@@ -20,7 +24,8 @@ export default function App() {
         <directionalLight intensity={1} position={[-20, 20, 0]} />
         <directionalLight intensity={0.5} position={[20, 20, 0]} />
         <Main length={length} />
-        <OrbitControls />
+        <Rig mouse={mouse} />
+        {/* <OrbitControls /> */}
         <Sky
           position={[0, 1, 0]}
           mieCoefficient={0.001}

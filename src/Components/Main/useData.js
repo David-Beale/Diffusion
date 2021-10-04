@@ -15,24 +15,20 @@ export const useData = ({ length }) => {
   const colorRef = useRef();
   const colorArray = useMemo(() => new Float32Array(length * 3), [length]);
   const index = useRef(1);
-  const w = useRef(new Walker({ start: false, boundingDist: 2 }));
-  const boundingDist = useRef(2);
+  const w = useRef(new Walker({ start: false, boundingDist: 4 }));
+  const boundingDist = useRef(4);
   const tree = useRef(new Octree());
   const range = useRef(new Sphere());
 
   useEffect(() => {
-    for (let i = 0; i < length; i++) {
-      scratchObject3D.position.set(0, 0, 0);
-      scratchObject3D.scale.set(1, 1, 1);
-      scratchObject3D.updateMatrix();
-      meshRef.current.setMatrixAt(i, scratchObject3D.matrix);
-    }
+    scratchObject3D.position.set(0, 0, 0);
+    scratchObject3D.scale.set(1, 1, 1);
+    scratchObject3D.updateMatrix();
+    meshRef.current.setMatrixAt(0, scratchObject3D.matrix);
     meshRef.current.instanceMatrix.needsUpdate = true;
 
-    for (let i = 0; i < length; i++) {
-      scratchColor.set("red");
-      scratchColor.toArray(colorArray, i * 3);
-    }
+    scratchColor.set("red");
+    scratchColor.toArray(colorArray, 0);
     colorRef.current.needsUpdate = true;
 
     tree.current.insert(new Walker({ start: true }));
@@ -60,7 +56,6 @@ export const useData = ({ length }) => {
       scratchColor.lerpColors(color2, color3, (wBoundingDist - 50) / 50);
     }
     scratchColor.toArray(colorArray, index.current * 3);
-    colorRef.current.needsUpdate = true;
 
     tree.current.insert(w.current.clone());
     w.current = new Walker({
@@ -69,7 +64,9 @@ export const useData = ({ length }) => {
     });
     index.current++;
 
+    colorRef.current.needsUpdate = true;
     meshRef.current.instanceMatrix.needsUpdate = true;
+    meshRef.current.count = index.current;
   });
 
   return [meshRef, colorRef, colorArray];
