@@ -40,9 +40,9 @@ export const useData = ({ length }) => {
       range.current.set(w.current);
       if (tree.current.query(range.current)) break;
     }
-    const wBoundingDist = w.current.pos.length();
-    if (wBoundingDist > boundingDist.current) {
-      boundingDist.current = wBoundingDist + 4;
+    const wDistFromOrigin = w.current.pos.length();
+    if (wDistFromOrigin > boundingDist.current) {
+      boundingDist.current = wDistFromOrigin + 4;
     }
     const { x, y, z } = w.current.pos;
     scratchObject3D.position.set(x, y, z);
@@ -50,18 +50,15 @@ export const useData = ({ length }) => {
     scratchObject3D.updateMatrix();
     meshRef.current.setMatrixAt(index.current, scratchObject3D.matrix);
 
-    if (wBoundingDist < 50) {
-      scratchColor.lerpColors(color1, color2, wBoundingDist / 50);
+    if (wDistFromOrigin < 50) {
+      scratchColor.lerpColors(color1, color2, wDistFromOrigin / 50);
     } else {
-      scratchColor.lerpColors(color2, color3, (wBoundingDist - 50) / 50);
+      scratchColor.lerpColors(color2, color3, (wDistFromOrigin - 50) / 50);
     }
     scratchColor.toArray(colorArray, index.current * 3);
 
     tree.current.insert(w.current.clone());
-    w.current = new Walker({
-      start: false,
-      boundingDist: boundingDist.current,
-    });
+    w.current.reset(boundingDist.current);
     index.current++;
 
     colorRef.current.needsUpdate = true;

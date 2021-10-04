@@ -6,11 +6,9 @@ class Walker {
     } else if (pos) {
       this.pos = pos.clone();
     } else {
-      this.boundingDist = boundingDist;
       this.pos = new Vector3();
-      this.pos.randomDirection();
-      this.pos.multiplyScalar(boundingDist);
       this.vel = new Vector3();
+      this.reset(boundingDist);
     }
   }
 
@@ -25,6 +23,11 @@ class Walker {
 
   clone() {
     return new Walker({ pos: this.pos });
+  }
+  reset(boundingDist) {
+    this.boundingDist = boundingDist;
+    this.pos.randomDirection();
+    this.pos.multiplyScalar(boundingDist);
   }
 }
 export default Walker;
