@@ -46,7 +46,7 @@ export const useData = ({ length }) => {
     }
     const wBoundingDist = w.current.pos.length();
     if (wBoundingDist > boundingDist.current) {
-      boundingDist.current = wBoundingDist + 2;
+      boundingDist.current = wBoundingDist + 4;
     }
     const { x, y, z } = w.current.pos;
     scratchObject3D.position.set(x, y, z);
