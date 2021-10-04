@@ -6,6 +6,9 @@ import Sphere from "./Octree/Sphere";
 import Walker from "./Walker";
 const scratchObject3D = new Object3D();
 const scratchColor = new Color();
+const color1 = new Color("red");
+const color2 = new Color("green");
+const color3 = new Color("blue");
 
 export const useData = ({ length }) => {
   const meshRef = useRef();
@@ -27,7 +30,7 @@ export const useData = ({ length }) => {
     meshRef.current.instanceMatrix.needsUpdate = true;
 
     for (let i = 0; i < length; i++) {
-      scratchColor.set("green");
+      scratchColor.set("red");
       scratchColor.toArray(colorArray, i * 3);
     }
     colorRef.current.needsUpdate = true;
@@ -50,6 +53,14 @@ export const useData = ({ length }) => {
     scratchObject3D.scale.set(1, 1, 1);
     scratchObject3D.updateMatrix();
     meshRef.current.setMatrixAt(index.current, scratchObject3D.matrix);
+
+    if (wBoundingDist < 50) {
+      scratchColor.lerpColors(color1, color2, wBoundingDist / 50);
+    } else {
+      scratchColor.lerpColors(color2, color3, (wBoundingDist - 50) / 50);
+    }
+    scratchColor.toArray(colorArray, index.current * 3);
+    colorRef.current.needsUpdate = true;
 
     tree.current.insert(w.current.clone());
     w.current = new Walker({
