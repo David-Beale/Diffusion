@@ -36,10 +36,9 @@ export const useData = ({ length }) => {
   }, [colorArray, length]);
 
   useFrame(() => {
-    range.current.set(w.current);
-
     while (!w.current.stuck) {
       w.current.walk();
+      range.current.set(w.current);
       if (tree.current.query(range.current)) break;
     }
     const wBoundingDist = w.current.pos.length();
