@@ -12,7 +12,7 @@ export default function Main({ length }) {
       args={[null, null, length]}
       frustumCulled={false}
     >
-      <sphereBufferGeometry args={[1, 16, 16]}>
+      <sphereBufferGeometry args={[0.9, 16, 16]}>
         <instancedBufferAttribute
           ref={colorRef}
           attachObject={["attributes", "color"]}
@@ -20,7 +20,12 @@ export default function Main({ length }) {
         />
       </sphereBufferGeometry>
 
-      <meshStandardMaterial attach="material" vertexColors={VertexColors} />
+      <meshStandardMaterial
+        attach="material"
+        vertexColors={VertexColors}
+        transparent={true}
+        opacity={0.5}
+      />
     </instancedMesh>
   );
 }
