@@ -35,6 +35,7 @@ export const useData = ({ length }) => {
   }, [colorArray, length]);
 
   useFrame(() => {
+    if (index.current === length || boundingDist.current > 100) return;
     while (!w.current.stuck) {
       w.current.walk();
       range.current.set(w.current);
