@@ -10,21 +10,23 @@ const color2 = new Color("aqua");
 const color3 = new Color("green");
 
 const maxRange = 110;
+const numMeshes = 5;
+const bufferSize = 520;
 
 export const useData = ({ length }) => {
   const meshes = useRef(
-    Array.from({ length: 5 }, () => {
+    Array.from({ length: numMeshes }, () => {
       return {
         meshRef: createRef(),
         colorRef: createRef(),
-        colorArray: new Float32Array((length / 5) * 3),
+        colorArray: new Float32Array((length / numMeshes) * 3),
       };
     })
   );
   const currentMesh = useRef(0);
   const bufferMeshRef = useRef();
   const bufferColorRef = useRef();
-  const bufferColorArray = useMemo(() => new Float32Array(1560), []);
+  const bufferColorArray = useMemo(() => new Float32Array(bufferSize * 3), []);
   const index = useRef(1);
   const bufferIndex = useRef(0);
   const boundingDist = useRef(0);
@@ -64,6 +66,7 @@ export const useData = ({ length }) => {
       if (dist < 65) {
         scratchColor.lerpColors(color1, color2, dist / 65);
       } else {
+        dist = Math.max(dist, 100);
         scratchColor.lerpColors(color2, color3, (dist - 65) / 35);
       }
       scratchColor.toArray(bufferColorArray, bufferIndex.current * 3);
@@ -113,7 +116,7 @@ export const useData = ({ length }) => {
 
       index.current++;
 
-      if (index.current === 10000) {
+      if (index.current === length / numMeshes) {
         currentMesh.current++;
         colorRef.current.needsUpdate = true;
         meshRef.current.instanceMatrix.needsUpdate = true;
@@ -121,7 +124,7 @@ export const useData = ({ length }) => {
         index.current = 0;
         matrixIndex = 0;
         colorIndex = 0;
-        if (currentMesh.current === 5) {
+        if (currentMesh.current === numMeshes) {
           finished.current = true;
           worker.postMessage({ message: "finished" });
           return;
@@ -135,11 +138,11 @@ export const useData = ({ length }) => {
     meshRef.current.instanceMatrix.needsUpdate = true;
     meshRef.current.count = index.current;
     bufferIndex.current = 0;
-  }, [bufferColorArray]);
+  }, [bufferColorArray, length]);
 
   useFrame(() => {
     if (finished.current) return;
-    if (bufferIndex.current >= 500) transferBufferData();
+    if (bufferIndex.current >= bufferSize - 20) transferBufferData();
     worker.postMessage({ message: "ping" });
   });
 

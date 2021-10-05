@@ -1,6 +1,7 @@
 import { VertexColors } from "three";
 import { useData } from "./useData";
 
+const bufferSize = 520;
 export default function Main({ length }) {
   const [meshes, bufferMeshRef, bufferColorRef, bufferColorArray] = useData({
     length,
@@ -28,7 +29,7 @@ export default function Main({ length }) {
       ))}
       <instancedMesh
         ref={bufferMeshRef}
-        args={[null, null, 520]}
+        args={[null, null, bufferSize]}
         frustumCulled={false}
       >
         <sphereBufferGeometry args={[1, 16, 16]}>
