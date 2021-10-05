@@ -24,7 +24,7 @@ export const useData = ({ length }) => {
   const currentMesh = useRef(0);
   const bufferMeshRef = useRef();
   const bufferColorRef = useRef();
-  const bufferColorArray = useMemo(() => new Float32Array(360), []);
+  const bufferColorArray = useMemo(() => new Float32Array(1560), []);
   const index = useRef(1);
   const bufferIndex = useRef(0);
   const boundingDist = useRef(0);
@@ -139,7 +139,7 @@ export const useData = ({ length }) => {
 
   useFrame(() => {
     if (finished.current) return;
-    if (bufferIndex.current >= 100) transferBufferData();
+    if (bufferIndex.current >= 500) transferBufferData();
     worker.postMessage({ message: "ping" });
   });
 

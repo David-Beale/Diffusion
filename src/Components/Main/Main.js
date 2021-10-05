@@ -28,7 +28,7 @@ export default function Main({ length }) {
       ))}
       <instancedMesh
         ref={bufferMeshRef}
-        args={[null, null, 120]}
+        args={[null, null, 520]}
         frustumCulled={false}
       >
         <sphereBufferGeometry args={[1, 16, 16]}>
