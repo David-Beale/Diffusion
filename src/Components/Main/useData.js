@@ -121,6 +121,11 @@ export const useData = ({ length }) => {
         index.current = 0;
         matrixIndex = 0;
         colorIndex = 0;
+        if (currentMesh.current === 5) {
+          finished.current = true;
+          worker.postMessage({ message: "finished" });
+          return;
+        }
       }
     }
 
@@ -134,11 +139,6 @@ export const useData = ({ length }) => {
 
   useFrame(() => {
     if (finished.current) return;
-    if (index.current >= length || boundingDist.current > maxRange) {
-      finished.current = true;
-      worker.postMessage({ message: "finished" });
-      return;
-    }
     if (bufferIndex.current >= 100) transferBufferData();
     worker.postMessage({ message: "ping" });
   });
