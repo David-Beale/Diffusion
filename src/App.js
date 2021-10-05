@@ -20,7 +20,7 @@ export default function App() {
         }}
       >
         <Stats className="stats" />
-        <ambientLight intensity={1} />
+        <ambientLight intensity={0.5} />
         <directionalLight intensity={1} position={[-20, 20, 0]} />
         <directionalLight intensity={0.5} position={[20, 20, 0]} />
         <Main length={length} />

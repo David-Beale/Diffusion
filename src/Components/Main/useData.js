@@ -6,8 +6,8 @@ const worker = new Worker("./worker/worker.js");
 const scratchObject3D = new Object3D();
 const scratchColor = new Color();
 const color1 = new Color("red");
-const color2 = new Color("green");
-const color3 = new Color("blue");
+const color2 = new Color("aqua");
+const color3 = new Color("green");
 
 const maxRange = 110;
 
