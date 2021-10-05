@@ -2,34 +2,30 @@ import { VertexColors } from "three";
 import { useData } from "./useData";
 
 export default function Main({ length }) {
-  const [
-    meshRef,
-    colorRef,
-    colorArray,
-    bufferMeshRef,
-    bufferColorRef,
-    bufferColorArray,
-  ] = useData({
+  const [meshes, bufferMeshRef, bufferColorRef, bufferColorArray] = useData({
     length,
   });
 
   return (
     <>
-      <instancedMesh
-        ref={meshRef}
-        args={[null, null, length]}
-        frustumCulled={false}
-      >
-        <sphereBufferGeometry args={[1, 16, 16]}>
-          <instancedBufferAttribute
-            ref={colorRef}
-            attachObject={["attributes", "color"]}
-            args={[colorArray, 3]}
-          />
-        </sphereBufferGeometry>
+      {meshes.current.map(({ meshRef, colorRef, colorArray }, index) => (
+        <instancedMesh
+          ref={meshRef}
+          args={[null, null, length / meshes.current.length]}
+          frustumCulled={false}
+          key={index}
+        >
+          <sphereBufferGeometry args={[1, 16, 16]}>
+            <instancedBufferAttribute
+              ref={colorRef}
+              attachObject={["attributes", "color"]}
+              args={[colorArray, 3]}
+            />
+          </sphereBufferGeometry>
 
-        <meshStandardMaterial attach="material" vertexColors={VertexColors} />
-      </instancedMesh>
+          <meshStandardMaterial attach="material" vertexColors={VertexColors} />
+        </instancedMesh>
+      ))}
       <instancedMesh
         ref={bufferMeshRef}
         args={[null, null, 120]}

@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { createRef, useCallback, useEffect, useMemo, useRef } from "react";
 import { Color, Object3D } from "three";
 const worker = new Worker("./worker/worker.js");
 
@@ -12,21 +12,34 @@ const color3 = new Color("green");
 const maxRange = 110;
 
 export const useData = ({ length }) => {
-  const meshRef = useRef();
+  const meshes = useRef(
+    Array.from({ length: 5 }, () => {
+      return {
+        meshRef: createRef(),
+        colorRef: createRef(),
+        colorArray: new Float32Array((length / 5) * 3),
+      };
+    })
+  );
+  const currentMesh = useRef(0);
   const bufferMeshRef = useRef();
-  const colorRef = useRef();
   const bufferColorRef = useRef();
-  const colorArray = useMemo(() => new Float32Array(length * 3), [length]);
   const bufferColorArray = useMemo(() => new Float32Array(360), []);
   const index = useRef(1);
   const bufferIndex = useRef(0);
   const boundingDist = useRef(0);
   const finished = useRef(false);
-
   useEffect(() => {
+    meshes.current.forEach((mesh, index) => {
+      const { meshRef } = mesh;
+      meshRef.current.count = index === 0 ? 1 : 0;
+    });
+
     scratchObject3D.position.set(0, 0, 0);
     scratchObject3D.scale.set(1, 1, 1);
     scratchObject3D.updateMatrix();
+    const { meshRef, colorRef, colorArray } =
+      meshes.current[currentMesh.current];
     meshRef.current.setMatrixAt(0, scratchObject3D.matrix);
     meshRef.current.instanceMatrix.needsUpdate = true;
 
@@ -35,7 +48,7 @@ export const useData = ({ length }) => {
     colorRef.current.needsUpdate = true;
 
     worker.postMessage({ message: "start", maxRange });
-  }, [colorArray, length]);
+  }, [length]);
 
   const updateBufferMesh = useCallback(
     (pos, dist) => {
@@ -77,24 +90,47 @@ export const useData = ({ length }) => {
   }, [updateBufferMesh]);
 
   const transferBufferData = useCallback(() => {
-    let start = index.current * 16;
-    let end = start + bufferIndex.current * 16;
-    for (let i = start; i < end; i++) {
-      meshRef.current.instanceMatrix.array[i] =
-        bufferMeshRef.current.instanceMatrix.array[i - start];
+    let bufferMatrixIndex = 0;
+    let matrixIndex = index.current * 16;
+    let bufferColorIndex = 0;
+    let colorIndex = index.current * 3;
+
+    for (let i = 0; i < bufferIndex.current; i++) {
+      const { meshRef, colorRef, colorArray } =
+        meshes.current[currentMesh.current];
+      for (let j = 0; j < 16; j++) {
+        meshRef.current.instanceMatrix.array[matrixIndex] =
+          bufferMeshRef.current.instanceMatrix.array[bufferMatrixIndex];
+        bufferMatrixIndex++;
+        matrixIndex++;
+      }
+
+      for (let i = 0; i < 3; i++) {
+        colorArray[colorIndex] = bufferColorArray[bufferColorIndex];
+        bufferColorIndex++;
+        colorIndex++;
+      }
+
+      index.current++;
+
+      if (index.current === 10000) {
+        currentMesh.current++;
+        colorRef.current.needsUpdate = true;
+        meshRef.current.instanceMatrix.needsUpdate = true;
+        meshRef.current.count = index.current;
+        index.current = 0;
+        matrixIndex = 0;
+        colorIndex = 0;
+      }
     }
 
-    start = index.current * 3;
-    end = start + bufferIndex.current * 3;
-    for (let i = start; i < end; i++) {
-      colorArray[i] = bufferColorArray[i - start];
-    }
+    const { meshRef, colorRef } = meshes.current[currentMesh.current];
+
     colorRef.current.needsUpdate = true;
     meshRef.current.instanceMatrix.needsUpdate = true;
-    index.current += bufferIndex.current;
     meshRef.current.count = index.current;
     bufferIndex.current = 0;
-  }, [bufferColorArray, colorArray]);
+  }, [bufferColorArray]);
 
   useFrame(() => {
     if (finished.current) return;
@@ -107,12 +143,5 @@ export const useData = ({ length }) => {
     worker.postMessage({ message: "ping" });
   });
 
-  return [
-    meshRef,
-    colorRef,
-    colorArray,
-    bufferMeshRef,
-    bufferColorRef,
-    bufferColorArray,
-  ];
+  return [meshes, bufferMeshRef, bufferColorRef, bufferColorArray];
 };
