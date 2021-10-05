@@ -5,7 +5,7 @@ import { Vector3 } from "three";
 const target = new Vector3();
 
 const speed = 0.005;
-export default function Rig({ mouse }) {
+export default function Rig({ mouse, outerRadius }) {
   const prevTheta = useRef(0);
   const prevPhi = useRef(0.5 * Math.PI);
   const prevR = useRef(100);
@@ -13,10 +13,11 @@ export default function Rig({ mouse }) {
   useFrame(() => {
     const theta = mouse.current[0] * 2 * Math.PI;
     const phi = mouse.current[1] * Math.PI;
-    const r = mouse.current[2];
+    const r = mouse.current[2] || Math.max(outerRadius.current * 4, 100);
     const newTheta = prevTheta.current + speed * (theta - prevTheta.current);
     const newPhi = prevPhi.current + speed * (phi - prevPhi.current);
-    const newR = prevR.current + 0.1 * (r - prevR.current);
+    const rSpeed = mouse.current[2] ? 0.1 : 0.001;
+    const newR = prevR.current + rSpeed * (r - prevR.current);
     target.setFromSphericalCoords(newR, newPhi, newTheta);
     camera.position.x = target.x;
     camera.position.y = target.y;

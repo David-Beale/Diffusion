@@ -5,11 +5,13 @@ import Main from "./Components/Main/Main";
 import { useState } from "react";
 import { useRigMouseEvents } from "./Components/Rig/useRigMouseEvents";
 import Rig from "./Components/Rig/Rig";
+import { useRef } from "react/cjs/react.development";
 
 export default function App() {
   const [length, setLength] = useState(50000);
+  const outerRadius = useRef(4);
 
-  const [mouse, onMouseMove, onWheel] = useRigMouseEvents();
+  const [mouse, onMouseMove, onWheel] = useRigMouseEvents(outerRadius);
   return (
     <div className="container" onPointerMove={onMouseMove} onWheel={onWheel}>
       <Canvas
@@ -23,8 +25,8 @@ export default function App() {
         <ambientLight intensity={0.5} />
         <directionalLight intensity={1} position={[-20, 20, 0]} />
         <directionalLight intensity={0.5} position={[20, 20, 0]} />
-        <Main length={length} />
-        <Rig mouse={mouse} />
+        <Main length={length} outerRadius={outerRadius} />
+        <Rig mouse={mouse} outerRadius={outerRadius} />
         {/* <OrbitControls /> */}
         <Sky
           position={[0, 1, 0]}

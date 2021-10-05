@@ -13,7 +13,7 @@ const maxRange = 110;
 const numMeshes = 5;
 const bufferSize = 520;
 
-export const useData = ({ length }) => {
+export const useData = ({ length, outerRadius }) => {
   const meshes = useRef(
     Array.from({ length: numMeshes }, () => {
       return {
@@ -29,7 +29,7 @@ export const useData = ({ length }) => {
   const bufferColorArray = useMemo(() => new Float32Array(bufferSize * 3), []);
   const index = useRef(1);
   const bufferIndex = useRef(0);
-  const boundingDist = useRef(0);
+
   const finished = useRef(false);
   useEffect(() => {
     meshes.current.forEach((mesh, index) => {
@@ -66,7 +66,7 @@ export const useData = ({ length }) => {
       if (dist < 65) {
         scratchColor.lerpColors(color1, color2, dist / 65);
       } else {
-        dist = Math.max(dist, 100);
+        dist = Math.min(dist, 100);
         scratchColor.lerpColors(color2, color3, (dist - 65) / 35);
       }
       scratchColor.toArray(bufferColorArray, bufferIndex.current * 3);
@@ -80,7 +80,7 @@ export const useData = ({ length }) => {
       const results = e.data;
       results.forEach((result) => {
         const { pos, dist, maxDist } = result;
-        boundingDist.current = maxDist;
+        outerRadius.current = maxDist;
         updateBufferMesh(pos, dist);
       });
       bufferColorRef.current.needsUpdate = true;
@@ -90,7 +90,7 @@ export const useData = ({ length }) => {
     return () => {
       worker.postMessage({ message: "finished" });
     };
-  }, [updateBufferMesh]);
+  }, [outerRadius, updateBufferMesh]);
 
   const transferBufferData = useCallback(() => {
     let bufferMatrixIndex = 0;

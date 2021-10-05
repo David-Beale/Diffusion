@@ -2,9 +2,10 @@ import { VertexColors } from "three";
 import { useData } from "./useData";
 
 const bufferSize = 520;
-export default function Main({ length }) {
+export default function Main({ length, outerRadius }) {
   const [meshes, bufferMeshRef, bufferColorRef, bufferColorArray] = useData({
     length,
+    outerRadius,
   });
 
   return (

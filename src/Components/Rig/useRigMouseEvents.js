@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
-export const useRigMouseEvents = () => {
-  const mouse = useRef([0, 0.5, 100]);
+export const useRigMouseEvents = (outerRadius) => {
+  const mouse = useRef([0, 0.5, null]);
 
   const onMouseMove = (e) => {
     mouse.current[0] = e.clientX / window.innerWidth - 0.5;
@@ -9,6 +9,8 @@ export const useRigMouseEvents = () => {
   };
 
   const onWheel = (e) => {
+    if (!mouse.current[2])
+      mouse.current[2] = Math.max(outerRadius.current * 4, 100);
     if (e.deltaY < 0) {
       if (mouse.current[2] < 50) return;
       mouse.current[2] *= 0.8;
