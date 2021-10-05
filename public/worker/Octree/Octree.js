@@ -1,7 +1,7 @@
-import Box from "./Box";
-
-export default class Octree {
-  constructor(boundary = new Box(0, 0, 0, 100, 100, 100)) {
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-globals */
+class Octree {
+  constructor(boundary) {
     this.sectionsLength = 8;
     this.subSections = [];
     this.boundary = boundary;

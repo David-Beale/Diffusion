@@ -32,7 +32,7 @@ export default function Main({ length }) {
       </instancedMesh>
       <instancedMesh
         ref={bufferMeshRef}
-        args={[null, null, 100]}
+        args={[null, null, 120]}
         frustumCulled={false}
       >
         <sphereBufferGeometry args={[1, 16, 16]}>

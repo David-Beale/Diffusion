@@ -1,13 +1,14 @@
-import { Vector3 } from "three";
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-globals */
 class Walker {
   constructor({ start, boundingDist, pos }) {
     if (start) {
-      this.pos = new Vector3(0, 0, 0);
+      this.pos = new THREE.Vector3(0, 0, 0);
     } else if (pos) {
       this.pos = pos.clone();
     } else {
-      this.pos = new Vector3();
-      this.vel = new Vector3();
+      this.pos = new THREE.Vector3();
+      this.vel = new THREE.Vector3();
       this.reset(boundingDist);
     }
   }
@@ -30,4 +31,3 @@ class Walker {
     this.pos.multiplyScalar(boundingDist);
   }
 }
-export default Walker;

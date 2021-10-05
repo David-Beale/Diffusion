@@ -1,4 +1,6 @@
-export default class Box {
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-globals */
+class Box {
   constructor(x, y, z, w, h, d) {
     this.x = x;
     this.y = y;

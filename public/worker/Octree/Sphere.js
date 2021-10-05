@@ -1,5 +1,6 @@
-import * as THREE from "three";
-export default class Sphere {
+/* eslint-disable no-undef */
+/* eslint-disable no-restricted-globals */
+class Sphere {
   constructor(x = 0, y = 0, z = 0, r = 2) {
     this.pos = new THREE.Vector3(x, y, z);
     this.r = r;
