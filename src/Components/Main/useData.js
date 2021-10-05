@@ -61,10 +61,10 @@ export const useData = ({ length }) => {
         scratchObject3D.matrix
       );
 
-      if (dist < 50) {
-        scratchColor.lerpColors(color1, color2, dist / 50);
+      if (dist < 65) {
+        scratchColor.lerpColors(color1, color2, dist / 65);
       } else {
-        scratchColor.lerpColors(color2, color3, (dist - 50) / 50);
+        scratchColor.lerpColors(color2, color3, (dist - 65) / 35);
       }
       scratchColor.toArray(bufferColorArray, bufferIndex.current * 3);
       bufferIndex.current++;
