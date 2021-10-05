@@ -21,6 +21,7 @@ export const useData = ({ length }) => {
   const index = useRef(1);
   const bufferIndex = useRef(0);
   const boundingDist = useRef(0);
+  const finished = useRef(false);
 
   useEffect(() => {
     scratchObject3D.position.set(0, 0, 0);
@@ -96,7 +97,12 @@ export const useData = ({ length }) => {
   }, [bufferColorArray, colorArray]);
 
   useFrame(() => {
-    if (index.current >= length || boundingDist.current > maxRange) return;
+    if (finished.current) return;
+    if (index.current >= length || boundingDist.current > maxRange) {
+      finished.current = true;
+      worker.postMessage({ message: "finished" });
+      return;
+    }
     if (bufferIndex.current >= 100) transferBufferData();
     worker.postMessage({ message: "ping" });
   });
